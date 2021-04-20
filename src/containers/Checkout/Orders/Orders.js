@@ -1,7 +1,9 @@
 import React,{ Component } from "react";
 import Order from "../../../components/Order/Order";
-import axios from "../../../axios-orders";
+// import axios from "../../../axios-orders";
 import Spinner from "../../../components/UI/Spinner/Spinner";
+import { connect } from "react-redux";
+import * as actionTypesOrder from '../../../store/actions/index';
 
 
 class Orders extends Component{
@@ -11,30 +13,33 @@ class Orders extends Component{
     }
 
     componentDidMount(){
-        axios.get("/orders.json").then(res=>{
-            console.log(res.data);
-            const fetchedOrder=[];
-            for(let key in res.data){
-                console.log("key = ",res.data[key]);
-                fetchedOrder.push({
-                    ...res.data[key],
-                    id:key
+        // NOT NEEDED AFTER REDUX ASYNC
+        // axios.get("/orders.json").then(res=>{
+        //     console.log(res.data);
+        //     const fetchedOrder=[];
+        //     for(let key in res.data){
+        //         console.log("key = ",res.data[key]);
+        //         fetchedOrder.push({
+        //             ...res.data[key],
+        //             id:key
                     
-                });
+        //         });
                 
-            }
-            console.log(fetchedOrder);
-            this.setState({orders:fetchedOrder, loading:false});
-        })
-        .catch(err=>{
-            this.setState({loading:false});
-        })
+        //     }
+        //     console.log(fetchedOrder);
+        //     this.setState({orders:fetchedOrder, loading:false});
+        // })
+        // .catch(err=>{
+        //     this.setState({loading:false});
+        // })
+        this.props.fetchOrders();
+        // console.log("Orders = ",this.props.orders);
     }
 
     render(){
-        let order=<Spinner />
-        if(!this.state.loading){
-            order = this.state.orders.map(ord=>{
+        let order=this.props.error?<p>Something went wrong</p>:<Spinner />
+        if(!this.props.loading&&!this.props.error){
+            order = this.props.orders.map(ord=>{
                 return(
                     <Order key={ord.id} ingredients={ord.ingredients} price={ord.price} />
                 )
@@ -48,4 +53,18 @@ class Orders extends Component{
         )
     }
 }
-export default Orders;
+
+const mapStateToProps = state => {
+    return {
+        orders:state.order.orderData,
+        loading:state.order.loading,
+        error : state.order.error
+    }
+}
+const mapDispatchToProps = dispatch => {
+    return {
+        fetchOrders : () => dispatch(actionTypesOrder.fetchOrders())
+    }
+}
+
+export default connect(mapStateToProps,mapDispatchToProps)(Orders);
