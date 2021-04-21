@@ -108,6 +108,7 @@ class ContactData extends Component{
         const order = {
             ingredients: this.props.ingredient,
             price : this.props.totalPrice.toFixed(2),
+            userId : this.props.userId,
             orderData:formData,
         }
         // NOT NEEDED AFTER REDUX ASYNC
@@ -119,7 +120,7 @@ class ContactData extends Component{
         // .catch(error=>{
         //     this.setState({loading:false});
         // })
-        this.props.onBurgerOrder(order);
+        this.props.onBurgerOrder(order,this.props.token);
         
         if(!this.props.loading){
             this.props.clearState();
@@ -201,13 +202,15 @@ const mapStateToProps = (state)=>{
         ingredient:state.burgerBuilder.ingredients,
         totalPrice:state.burgerBuilder.totalPrice,
         loading:state.order.loading,
-        purchased:state.order.purchased
+        purchased:state.order.purchased,
+        token : state.auth.token,
+        userId : state.auth.userId
     }
 }
 
 const mapDispatchToProps = dispatch => {
     return {
-        onBurgerOrder: (orderData) => dispatch(actionTypesOrder.purchaseBurger(orderData)),
+        onBurgerOrder: (orderData,token) => dispatch(actionTypesOrder.purchaseBurger(orderData,token)),
         clearState : () => dispatch(actionTypesOrder.clearState())
     }
 }

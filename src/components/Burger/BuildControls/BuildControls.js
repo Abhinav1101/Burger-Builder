@@ -10,7 +10,6 @@ const controls = [
 ];
 
 const buildControls = (props) => {
-    
     return (
         <div className={classes.BuildControls}>
             <p>Total Price = <strong>{props.price.toFixed(2)}</strong></p>
@@ -25,7 +24,7 @@ const buildControls = (props) => {
             <button 
             className={classes.OrderButton} 
             disabled={!props.purchasable}
-            onClick={props.purchasing}>ORDER NOW</button>
+            onClick={props.purchasing}>{props.isAuth?'ORDER NOW':'SIGN UP TO ORDER NOW'}</button>
         </div>
     )
 }
